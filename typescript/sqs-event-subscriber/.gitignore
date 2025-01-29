@@ -1,0 +1,7 @@
+.idea
+/.serverless
+/coverage
+/node_modules
+/build
+/.DS_store
+.env
