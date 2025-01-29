@@ -1,0 +1,13 @@
+EventSubscriberMessageTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: EventSubscriberMessages-${opt:stage, 'dev'}
+    AttributeDefinitions:
+      - AttributeName: messageID
+        AttributeType: S
+    KeySchema:
+      - AttributeName: messageID
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1

@@ -1,0 +1,24 @@
+Resources:
+  EventSubscriberQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: EventSubscriber-${opt:stage, 'dev'}
+      VisibilityTimeout: ${self:provider.timeOut}
+      KmsMasterKeyId: ${self:provider.kms-key-arn}
+  EventSubscriberQueueSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      Endpoint:
+        Fn::GetAtt: [EventSubscriberQueue, Arn]
+      Region: ${self:provider.region}
+      TopicArn:
+        Fn::ImportValue: ${self:provider.event-publisher-stack-name}-EventPublisherTopicARN
+Outputs:
+  EventSubscriberQueue:
+    Description: Arn of the SQS Queue used to initiate processing
+    Value: !Ref EventSubscriberQueue
+    Export:
+      Name: !Sub
+        - '#{StackName}-EventSubscriberQueue'
+        - StackName: background-check-processor-${opt:stage, 'dev'}
