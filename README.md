@@ -50,8 +50,7 @@ Welcome to **CatCopilot**! Think of this repository as your personal companion t
 
 ## License
 
-TBD (choose a license that suits your needs, such as MIT, Apache-2.0, or GPL).
-
+TBD 
 ---
 
 **Happy coding**, and may Titus guide you through every commit and push! If you have questions, feel free to reach out via Issues or Discussions. We can’t wait to see what you build. 
