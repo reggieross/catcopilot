@@ -1,0 +1,22 @@
+{
+  "name": "sqs-event-subscriber",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run ./handler/sqs/index.ts",
+    "test": "bun test"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.738.0",
+    "@aws-sdk/client-sqs": "^3.738.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/types": "^3.734.0",
+    "@types/bun": "latest",
+    "serverless": "^4.5.1"
+
+  }
+}

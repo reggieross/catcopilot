@@ -3,7 +3,10 @@
 
 ## About
 
-This is a base level project for a serverless event consumer.
+This is a base level project for a serverless event consumer. It is setup using bun
+
+### Setup 
+
 
 
 ## Gotcha's SQS
