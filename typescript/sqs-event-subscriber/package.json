@@ -3,20 +3,33 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "bun run ./handler/sqs/index.ts",
-    "test": "bun test"
+    "rabbitmq:stop": "docker-compose -f ./local/docker-compose.yml down",
+    "rabbitmq": "docker-compose -f ./local/docker-compose.yml up -d queue",
+    "prestart": "bun run rabbitmq:stop && bun run rabbitmq",
+    "start": "sls offline start",
+    "test": "bun test",
+    "build": "rm -rf ./build && bun run ./bun.config.js",
+    "deploy:dev": "sls deploy --stage dev",
+    "deploy:stage": "sls deploy --stage stage",
+    "deploy:prod": "sls deploy --stage prod",
+    "predeploy:dev": "bun run build",
+    "predeploy:stage": "bun run build",
+    "predeploy:prod": "bun run build"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.738.0",
-    "@aws-sdk/client-sqs": "^3.738.0"
+    "@aws-sdk/client-sqs": "^3.738.0",
+    "@serverless/utils": "^6.15.0",
+    "serverless-offline": "^14.4.0",
+    "serverless-offline-sqs": "^8.0.0"
   },
   "devDependencies": {
     "@aws-sdk/types": "^3.734.0",
+    "@serverless-bun/layer": "^1.0.1",
     "@types/bun": "latest",
     "serverless": "^4.5.1"
-
   }
 }

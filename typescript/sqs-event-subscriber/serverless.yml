@@ -1,0 +1,124 @@
+service: sqs-event-subscriber
+frameworkVersion: '4'
+
+plugins:
+  - '@serverless-bun/layer'
+  - serverless-offline-sqs
+  - serverless-offline
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!lib/**'
+    - '!handlers/**'
+    - '!scripts/**'
+    - '!cf/**'
+    - 'build/**'
+
+custom:
+  bunLayer:
+    release: 1.0.25
+  serverless-offline:
+    port: 3200
+  serverless-offline-sqs:
+    autoCreate: true
+    apiVersion: '2012-11-05'
+    endpoint: http://0.0.0.0:9324
+    region: us-east-1
+    accessKeyId: doesnt_matter
+    secretAccessKey: doesnt_matter
+    skipCacheInvalidation: false
+  sqs:
+    visibilityTimeout: 120
+  environment:
+    dev:
+      ENVIRONMENT: dev
+      SQS_ENDPOINT: ${self:custom.serverless-offline-sqs.endpoint}
+    stage:
+      ENVIRONMENT: stage
+    prod:
+      ENVIRONMENT: prod
+
+provider:
+  name: aws
+  architecture: arm64
+  runtime: provided.al2
+  region: us-east-1
+  timeout: 30
+  stage: ${opt:stage, 'dev'}
+  environment: ${self:custom.environment.${self:provider.stage}}
+  tracing:
+    lambda: true
+  iam:
+    role:
+      name: domain-handler-role
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "sqs:SendMessage"
+            - "sqs:GetQueueUrl"
+          Resource:
+            - !GetAtt EventSubscriberQueue.Arn  # Ensuring reference to the correct queue
+
+        - Effect: "Allow"
+          Action:
+            - "sqs:ListQueues"
+          Resource:
+            - !Sub 'arn:aws:sqs:${self:provider.region}:${AWS::AccountId}:*'
+        - Effect: "Allow"
+          Action:
+            - dynamodb:List*
+            - dynamodb:DescribeReservedCapacity*
+            - dynamodb:DescribeLimits
+            - dynamodb:DescribeTimeToLive
+          Resource:
+            - !GetAtt EventATable.Arn
+            - !GetAtt EventBTable.Arn
+            - !GetAtt EventCTable.Arn
+
+        - Effect: "Allow"
+          Action:
+            - dynamodb:BatchGet*
+            - dynamodb:DescribeStream
+            - dynamodb:DescribeTable
+            - dynamodb:Get*
+            - dynamodb:Query
+            - dynamodb:Delete*
+            - dynamodb:Update*
+            - dynamodb:PutItem
+          Resource:
+            - !GetAtt EventATable.Arn
+            - !GetAtt EventBTable.Arn
+            - !GetAtt EventCTable.Arn
+
+  stackTags:
+    ServiceName: ${self:service}
+
+functions:
+  eventA-consumer:
+    architecture: arm64
+    runtime: provided.al2
+    handler: build/handlers/sqs/eventA.handler
+    events:
+      - sqs:
+          arn: !GetAtt EventSubscriberQueue.Arn
+
+  eventB-consumer:
+    architecture: arm64
+    runtime: provided.al2
+    handler: build/handlers/sqs/eventB.handler
+    events:
+      - sqs:
+          arn: !GetAtt EventSubscriberQueue.Arn
+
+  eventC-consumer:
+    architecture: arm64
+    runtime: provided.al2
+    handler: build/handlers/sqs/eventC.handler
+    events:
+      - sqs:
+          arn: !GetAtt EventSubscriberQueue.Arn
+
+resources:
+  - ${file(./cf/sqs.yml)}
+  - ${file(./cf/dynamo.yml)}

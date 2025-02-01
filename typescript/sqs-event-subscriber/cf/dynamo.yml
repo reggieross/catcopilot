@@ -1,0 +1,40 @@
+Resources:
+  EventATable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: EventATable-${opt:stage, 'dev'}
+      AttributeDefinitions:
+        - AttributeName: messageID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: messageID
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  EventBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: EventBTable-${opt:stage, 'dev'}
+      AttributeDefinitions:
+        - AttributeName: messageID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: messageID
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  EventCTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: EventCTable-${opt:stage, 'dev'}
+      AttributeDefinitions:
+        - AttributeName: messageID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: messageID
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1

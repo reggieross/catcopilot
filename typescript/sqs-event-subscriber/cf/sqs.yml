@@ -1,0 +1,13 @@
+Resources:
+  EventSubscriberQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: EventSubscriber-${opt:stage, 'dev'}
+      VisibilityTimeout: ${self:custom.sqs.visibilityTimeout}
+
+Outputs:
+  DomainEventQueue:
+    Description: Arn of the SQS Queue used that will consume events for this domain
+    Value: !Ref EventSubscriberQueue
+    Export:
+      Name: "${self:service}-DomainEventQueue-${opt:stage, 'dev'}"

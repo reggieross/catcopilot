@@ -1,0 +1,1 @@
+export { FetchDynamoClient } from './client.ts';
